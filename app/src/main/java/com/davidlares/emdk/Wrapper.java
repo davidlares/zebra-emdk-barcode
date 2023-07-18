@@ -17,7 +17,7 @@ public class Wrapper implements EMDKListener {
             this.scanner = Scanner.getInstance();
             Log.d("EDMK Log", "Wrapper started");
         } else {
-            Log.d("EDMK Log", "EDMKResults failed to load");
+            Log.d("EDMK Log", "EDMK Results failed to load");
         }
     }
 

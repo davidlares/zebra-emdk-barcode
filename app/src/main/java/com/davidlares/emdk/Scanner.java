@@ -7,11 +7,13 @@ import com.symbol.emdk.barcode.ScanDataCollection;
 import com.symbol.emdk.barcode.ScannerException;
 import com.symbol.emdk.barcode.BarcodeManager;
 import com.symbol.emdk.barcode.ScannerResults;
+import com.davidlares.testapp.MainActivity;
 import com.symbol.emdk.barcode.StatusData;
 import com.davidlares.utils.Constants;
 import com.davidlares.utils.Listener;
 import java.util.ArrayList;
 import android.util.Log;
+import android.widget.Toast;
 
 public class Scanner implements DataListener, StatusListener {
 
@@ -77,11 +79,8 @@ public class Scanner implements DataListener, StatusListener {
             for (ScanDataCollection.ScanData data : scanData) {
                 String barcodeData = data.getData();
                 if(barcodeData.length() > 0) {
-                    Log.d("Scan Result", barcodeData);
-                    // implementing the listener
-                    if(listener != null) {
-                        listener.gettingValue(barcodeData);
-                    }
+                    Log.d("Test App", "Barcode data: " + barcodeData);
+                    Toast.makeText(MainActivity.getAppContext(), barcodeData, Toast.LENGTH_LONG).show();
                 }
             }
         }

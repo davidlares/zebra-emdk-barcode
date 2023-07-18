@@ -1,6 +1,8 @@
 package com.davidlares.testapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.davidlares.emdk.Bridge;
 import com.davidlares.utils.Constants;
 import com.davidlares.utils.Listener;
 import com.davidlares.emdk.Manager;
@@ -8,7 +10,6 @@ import com.davidlares.emdk.Wrapper;
 import com.davidlares.emdk.Scanner;
 import android.content.Context;
 import android.widget.Button;
-import android.widget.Toast;
 import android.util.Log;
 import android.view.View;
 import android.os.Bundle;
@@ -19,8 +20,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static MainActivity instance;
     private Button startScanner;
     private Button stopScanner;
-    private Scanner scanner;
     private Wrapper wrapper;
+    private Scanner scanner;
+    private Bridge bridge;
+
+    public MainActivity() {
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +47,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (Build.MANUFACTURER.contains("Zebra Technologies") || Build.MANUFACTURER.contains("Motorola Solutions")) {
             // wrapper instance
             this.wrapper = new Wrapper();
-            // setting up the listener
-            this.scanner.setListener(new Listener() {
-                @Override
-                public void gettingValue(String value) {
-                    // printing something here
-                    Toast.makeText(instance, value, Toast.LENGTH_LONG).show();
-                }
-            });
+            // scanner
+            this.bridge = new Bridge();
+            // stopping by default
+            this.bridge.stopScanner();
         }
     }
 
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // zebra
         if (Constants.emdkManager != null) {
             Manager.initBarcodeManager();
-            this.scanner.initScanner();
+            this.bridge.startScanner();
         }
     }
 
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // zebra
         if(Constants.emdkManager != null) {
             Manager.deInitBarcodeManager();
-            this.scanner.deInitScanner();
+            this.bridge.stopScanner();
         }
     }
 
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // zebra
         if (Constants.emdkManager != null) {
             Constants.emdkManager.release();
-            this.scanner.deInitScanner();
+            this.bridge.stopScanner();
             Constants.emdkManager = null;
         }
     }
@@ -94,15 +95,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.d("TestApp", "Handling the click event");
         switch(view.getId()) {
             case R.id.startScanner:
-                Log.d("TestApp", "Start scanner");
                 if(Constants.emdkManager != null) {
-                    this.scanner.initScanner();
+                    this.bridge.startScanner();
                 }
                 break;
             case R.id.stopScanner:
-                Log.d("TestApp", "Stop scanner");
                 if(Constants.emdkManager != null) {
-                    this.scanner.deInitScanner();
+                    this.bridge.stopScanner();
                 }
                 break;
         }
