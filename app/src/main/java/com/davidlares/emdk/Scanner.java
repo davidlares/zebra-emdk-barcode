@@ -79,8 +79,7 @@ public class Scanner implements DataListener, StatusListener {
             for (ScanDataCollection.ScanData data : scanData) {
                 String barcodeData = data.getData();
                 if(barcodeData.length() > 0) {
-                    Log.d("Test App", "Barcode data: " + barcodeData);
-                    Toast.makeText(MainActivity.getAppContext(), barcodeData, Toast.LENGTH_LONG).show();
+                    listener.gettingValue(barcodeData);
                 }
             }
         }

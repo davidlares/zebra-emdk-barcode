@@ -14,18 +14,18 @@ import android.util.Log;
 import android.view.View;
 import android.os.Bundle;
 import android.os.Build;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static MainActivity instance;
+    public static MainActivity instance;
     private Button startScanner;
+    private TextView resultText;
     private Button stopScanner;
     private Wrapper wrapper;
     private Scanner scanner;
     private Bridge bridge;
-
-    public MainActivity() {
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +43,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startScanner.setOnClickListener(this);
         stopScanner.setOnClickListener(this);
 
+        // textView
+        resultText = findViewById(R.id.resultText);
+
         // loading wrapper
         if (Build.MANUFACTURER.contains("Zebra Technologies") || Build.MANUFACTURER.contains("Motorola Solutions")) {
             // wrapper instance
@@ -51,6 +54,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             this.bridge = new Bridge();
             // stopping by default
             this.bridge.stopScanner();
+            // scanner instance
+            this.scanner = Scanner.getInstance();
+            // listener
+            this.scanner.setListener(new Listener() {
+                @Override
+                public void gettingValue(String value) {
+                    Log.d("Test App", "showing: " + value);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            resultText.append(value);
+                        }
+                    });
+                }
+            });
         }
     }
 
@@ -87,8 +105,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // context
     public static Context getAppContext() {
-        return instance.getApplicationContext();
-    }
+            return instance.getApplicationContext();
+        }
 
     @Override
     public void onClick(View view) {
